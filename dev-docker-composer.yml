@@ -1,0 +1,49 @@
+services:
+  users-api:
+    build: ./Users/.
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-database
+    env_file:
+      - ./Users/.env.local
+    command: npm run start:dev
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - journal-app
+
+  user-database:
+    image: postgres:12
+    ports:
+      - "5333:5432"
+    env_file:
+      - ./Users/.env.local
+    volumes:
+      - users-pgdata:/var/lib/postgresql/data
+    networks:
+      - journal-app
+
+  redis: 
+    image: redis:alpine
+    ports:
+      - "6380:6379"
+    networks:
+      - journal-app
+  
+  rabbitqm:
+    image:  rabbitmq:3-management
+    ports: 
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - journal-app
+
+volumes:
+  users-pgdata:
+
+networks:
+  journal-app:
+    driver: bridge
+    name: journal-app
