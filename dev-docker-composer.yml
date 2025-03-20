@@ -1,10 +1,11 @@
 services:
   users-api:
     build: ./Users/.
+    container_name: users-api
     ports:
       - "3000:3000"
     depends_on:
-      - user-database
+      - database
     env_file:
       - ./Users/.env.local
     command: npm run start:dev
@@ -13,17 +14,36 @@ services:
       - /usr/src/app/node_modules
     networks:
       - journal-app
+  
+  journals-api:
+    build: ./Journals/.
+    container_name: journals-api
+    ports:
+      - "3001:3001"
+    depends_on:
+      - database
+    env_file:
+      - ./Journals/.env.local
+    command: npm run start:dev
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - journal-app
 
-  user-database:
+  database:
     image: postgres:12
+    container_name: database
     ports:
       - "5333:5432"
     env_file:
-      - ./Users/.env.local
+      - .env.database
     volumes:
-      - users-pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d 
     networks:
       - journal-app
+  
 
   redis: 
     image: redis:alpine
@@ -41,7 +61,7 @@ services:
       - journal-app
 
 volumes:
-  users-pgdata:
+  pgdata:
 
 networks:
   journal-app:
