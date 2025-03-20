@@ -31,6 +31,22 @@ services:
     networks:
       - journal-app
 
+  analysis-api:
+    build: ./Analysis/.
+    container_name: analysis-api
+    ports:
+      - "3002:3002"
+    depends_on:
+      - database
+    env_file:
+      - ./Analysis/.env.local
+    command: npm run start:dev
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - journal-app
+
   database:
     image: postgres:12
     container_name: database
