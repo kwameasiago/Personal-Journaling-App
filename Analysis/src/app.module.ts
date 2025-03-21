@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AnalysisModule } from './analysis/analysis.module';
+import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 
 const ENV = process.env.NODE_ENV || 'local';
 
@@ -32,7 +33,8 @@ const ENV = process.env.NODE_ENV || 'local';
         },
       })
     }),
-    AnalysisModule],
+    AnalysisModule,
+    RabbitMQModule],
   controllers: [AppController],
   providers: [AppService],
 })

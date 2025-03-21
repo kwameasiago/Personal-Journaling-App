@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { JournalsModule } from './journals/journals.module';
+import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 
 const ENV = process.env.NODE_ENV || 'local'
 
@@ -32,7 +33,8 @@ const ENV = process.env.NODE_ENV || 'local'
         },
       })
     }),
-    JournalsModule
+    JournalsModule,
+    RabbitMQModule
   ],
   controllers: [AppController],
   providers: [AppService],
