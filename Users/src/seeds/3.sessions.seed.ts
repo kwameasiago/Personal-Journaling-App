@@ -14,13 +14,11 @@ export default class CreateSessions implements Seeder{
         }
         await connection.getRepository(Session).save([
             {
-                token: 'asdapsdasdapsd', 
                 device: 'sumsang', 
                 ip_address: '12344343',
                 user: johnDoe
             },
             {
-                token: 'adsfgh', 
                 device: 'phone', 
                 ip_address: '3123123',
                 user: johnDoe

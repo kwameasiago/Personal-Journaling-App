@@ -1,7 +1,9 @@
-import { Controller, Post, Req, Body, HttpException , HttpStatus, HttpCode} from '@nestjs/common';
+import { Controller, Post,Get, Req, Body, HttpException , HttpStatus, HttpCode, UseGuards} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { UsersService } from './users.service';
 import { RegisterBodyDto , LoginBodyDto} from './dto/users.dto';
+import { JwtAuthGuard } from './auth.guard';
 
 
 @Controller('users')
@@ -29,5 +31,11 @@ export class UsersController {
             throw new HttpException('An error occurred', HttpStatus.BAD_GATEWAY);
 
         }
+    }
+
+    @Get('sessions')
+    @UseGuards(JwtAuthGuard)
+    async getSessions(@Req() req: Request){
+        return this.usersService.getSessions(req)
     }
 }
