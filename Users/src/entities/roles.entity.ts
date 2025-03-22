@@ -19,6 +19,5 @@ export class Role{
     updated_at: Date
 
     @ManyToOne(() => User, (user) => user.role, {onDelete: 'CASCADE'})
-    @JoinColumn({name: 'role_id'})
     user: User
 }

@@ -50,7 +50,7 @@ This microservice is responsible for managing user authentication and session ma
 
 #### 1. Register Route
 
-- **Endpoint:** `POST /api/auth/register`
+- **Endpoint:** `POST /users/register`
 - **Purpose:**  
     Registers a new user by accepting their credentials and basic profile information.
 - **Request Payload:**
@@ -58,7 +58,6 @@ This microservice is responsible for managing user authentication and session ma
     ```json
     {
       "username": "string",      // Unique user identifier
-      "email": "string",         // Valid email address
       "password": "string"       // Secure password (client should enforce complexity rules)
     }
     ```
@@ -78,9 +77,12 @@ This microservice is responsible for managing user authentication and session ma
     
     ```json
     {
-      "status": "error",
-      "error": "Detailed error message."
-    }
+    "message": [
+        "Username is required"
+    ],
+    "error": "Bad Request",
+    "statusCode": 400
+}
     ```
     
 
