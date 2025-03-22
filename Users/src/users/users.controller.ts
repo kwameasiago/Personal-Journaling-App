@@ -1,8 +1,8 @@
-import { Controller, Post,Get, Req, Body, HttpException , HttpStatus, HttpCode, UseGuards} from '@nestjs/common';
+import { Controller, Post,Get,Put, Req, Body, HttpException , HttpStatus, HttpCode, UseGuards} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { UsersService } from './users.service';
-import { RegisterBodyDto , LoginBodyDto} from './dto/users.dto';
+import { RegisterBodyDto , LoginBodyDto, updateBodyDto} from './dto/users.dto';
 import { JwtAuthGuard } from './auth.guard';
 
 
@@ -60,5 +60,11 @@ export class UsersController {
         } catch (error) {
             throw new HttpException('An error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    
+    @Put('me')
+    @UseGuards(JwtAuthGuard)
+    async updateCurrentUser(@Body() body: updateBodyDto, @Req() req: Request){
+        return this.usersService.updateCurrentUser(body, req)
     }
 }

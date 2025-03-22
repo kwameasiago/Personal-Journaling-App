@@ -17,3 +17,7 @@ export class AuthCredentialsDto {
   export class LoginBodyDto extends AuthCredentialsDto {
     
   }
+
+  export class updateBodyDto extends AuthCredentialsDto {
+    
+  }

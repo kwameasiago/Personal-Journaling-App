@@ -19,30 +19,37 @@ describe('UsersController (2e2)', () => {
     beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
-          }).compile();
-      
-          app = moduleFixture.createNestApplication();
-          app.useGlobalPipes(
+        }).compile();
+
+        app = moduleFixture.createNestApplication();
+        app.useGlobalPipes(
             new ValidationPipe({
-              whitelist: true,  
-              transform: true,  
-              forbidNonWhitelisted: true,
+                whitelist: true,
+                transform: true,
+                forbidNonWhitelisted: true,
             }),
-          );
-          await app.init();
-          
-          roleRepository = moduleFixture.get(getRepositoryToken(Role))
-          userRepository = moduleFixture.get(getRepositoryToken(User))
-          const role = await roleRepository.save({
+        );
+        await app.init();
+
+        roleRepository = moduleFixture.get(getRepositoryToken(Role))
+        userRepository = moduleFixture.get(getRepositoryToken(User))
+        const role = await roleRepository.save({
             name: 'User',
             description: 'Just a user'
-          })
-          await userRepository.save({
-            username: 'Jane Doe',
-            password: await hashPassword('password'),
-            role
-          })
-          
+        })
+        await userRepository.save([
+            {
+                username: 'Jane Doe',
+                password: await hashPassword('password'),
+                role
+            },
+            {
+                username: 'John Doe',
+                password: await hashPassword('password'),
+                role
+            }
+        ])
+
 
 
 
@@ -56,108 +63,126 @@ describe('UsersController (2e2)', () => {
 
     it('should register new user', () => {
         return request(app.getHttpServer())
-        .post('/users/register')
-        .send({
-            username: 'name',
-            password: 'password'
-        })
-        .expect(201)
+            .post('/users/register')
+            .send({
+                username: 'name',
+                password: 'password'
+            })
+            .expect(201)
     })
 
 
     it('should throw error when username exist', () => {
         return request(app.getHttpServer())
-        .post('/users/register')
-        .send({
-            username: 'Jane Doe',
-            password: 'password'
-        })
-        .expect(403)
+            .post('/users/register')
+            .send({
+                username: 'Jane Doe',
+                password: 'password'
+            })
+            .expect(403)
     })
 
 
     it('should throw error password is not provided', () => {
         return request(app.getHttpServer())
-        .post('/users/register')
-        .send({
-            username: 'john'
-        })
-        .expect(400)
+            .post('/users/register')
+            .send({
+                username: 'john'
+            })
+            .expect(400)
     })
 
     it('should throw error passowrd is not provided', () => {
         return request(app.getHttpServer())
-        .post('/users/register')
-        .send({
-            password: 'alex'
-        })
-        .expect(400)
+            .post('/users/register')
+            .send({
+                password: 'alex'
+            })
+            .expect(400)
     })
 
     it('should login user successfully', () => {
         return request(app.getHttpServer())
-        .post('/users/login')
-        .send({
-            username: 'Jane Doe',
-            password: 'password'
-        })
-        .expect(200)
+            .post('/users/login')
+            .send({
+                username: 'Jane Doe',
+                password: 'password'
+            })
+            .expect(200)
     })
 
     it('should deny access to invalid credentials', () => {
         return request(app.getHttpServer())
-        .post('/users/login')
-        .send({
-            username: 'Jane Doe',
-            password: 'passwords'
-        })
-        .expect(403)
+            .post('/users/login')
+            .send({
+                username: 'Jane Doe',
+                password: 'passwords'
+            })
+            .expect(403)
     })
 
 
     it('should view active sessions', async () => {
-        const {body: {jwtToken}} = await request(app.getHttpServer())
-        .post('/users/login') 
-        .send({
-            username: 'Jane Doe',
-            password: 'password'
-        })
+        const { body: { jwtToken } } = await request(app.getHttpServer())
+            .post('/users/login')
+            .send({
+                username: 'Jane Doe',
+                password: 'password'
+            })
 
         return request(app.getHttpServer())
-        .get('/users/sessions')
-        .set('Authorization', `Bearer ${jwtToken}`)
-        .expect(200)
+            .get('/users/sessions')
+            .set('Authorization', `Bearer ${jwtToken}`)
+            .expect(200)
     })
 
-  
+
 
 
     it('should return current user', async () => {
-        const {body: {jwtToken}} = await request(app.getHttpServer())
-        .post('/users/login') 
-        .send({
-            username: 'Jane Doe',
-            password: 'password'
-        })
+        const { body: { jwtToken } } = await request(app.getHttpServer())
+            .post('/users/login')
+            .send({
+                username: 'Jane Doe',
+                password: 'password'
+            })
 
         return request(app.getHttpServer())
-        .get('/users/me')
-        .set('Authorization', `Bearer ${jwtToken}`)
-        .expect(200)
+            .get('/users/me')
+            .set('Authorization', `Bearer ${jwtToken}`)
+            .expect(200)
+    })
+
+    it('should update current user data', async () => {
+        const { body: { jwtToken } } = await request(app.getHttpServer())
+            .post('/users/login')
+            .send({
+                username: 'John Doe',
+                password: 'password'
+            })
+
+        return request(app.getHttpServer())
+            .put('/users/me')
+            .set('Authorization', `Bearer ${jwtToken}`)
+            .send({
+                username: 'Jane Doe Ally',
+                password: 'password'
+            })
+            .expect(200)
     })
 
     it('should signout user', async () => {
-        const {body: {jwtToken}} = await request(app.getHttpServer())
-        .post('/users/login') 
-        .send({
-            username: 'Jane Doe',
-            password: 'password'
-        })
+        const { body: { jwtToken } } = await request(app.getHttpServer())
+            .post('/users/login')
+            .send({
+                username: 'Jane Doe',
+                password: 'password'
+            })
 
         return request(app.getHttpServer())
-        .post('/users/signout')
-        .set('Authorization', `Bearer ${jwtToken}`)
-        .expect(200)
+            .post('/users/signout')
+            .set('Authorization', `Bearer ${jwtToken}`)
+            .expect(200)
     })
 
 })

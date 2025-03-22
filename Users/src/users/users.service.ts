@@ -298,4 +298,43 @@ async currentUser(req){
   }
 }
 
+/**
+ * Updates the current user's username and password.
+ * 
+ * First, the function checks if the new username is already taken by another user.
+ * If the username is available (or unchanged), the current user's record is updated.
+ *
+ * @param body - An object containing the updated user fields (username and password).
+ * @param req - The request object containing the authenticated user.
+ *   - req.user: The authenticated user object with at least an `id` property.
+ *
+ * @returns An object with a status message and the updated user details.
+ *
+ * @throws An error if the new username is already taken by another user.
+ */
+async updateCurrentUser(body: any, req: Request) {
+  const { user } = req;
+  const id: number = (user as any).id;
+  const { username, password } = body;
+
+  // Check if the new username is taken by another user
+  const existingUser = await this.userRepository.findOne({ where: { username } });
+  if (existingUser && existingUser.id !== id) {
+    throw new Error('Username is already taken.');
+  }
+
+  // Update the current user's record with the new username and password.
+  // (Ensure that the password is hashed if needed before saving)
+  await this.userRepository.update(id, { username, password: await hashPassword(password) });
+
+  // Retrieve the updated user record
+  const updatedUser = await this.userRepository.findOne({ where: { id }, select: ['id', 'username'] });
+
+  return {
+    status: 'success',
+    user: updatedUser,
+  };
+}
+
+
 }
