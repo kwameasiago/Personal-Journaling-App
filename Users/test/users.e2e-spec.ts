@@ -115,7 +115,7 @@ describe('UsersController (2e2)', () => {
     })
 
 
-    it('should deny access to invalid credentials', async () => {
+    it('should view active sessions', async () => {
         const {body: {jwtToken}} = await request(app.getHttpServer())
         .post('/users/login') 
         .send({
@@ -128,4 +128,19 @@ describe('UsersController (2e2)', () => {
         .set('Authorization', `Bearer ${jwtToken}`)
         .expect(200)
     })
+
+    it('should signout user', async () => {
+        const {body: {jwtToken}} = await request(app.getHttpServer())
+        .post('/users/login') 
+        .send({
+            username: 'Jane Doe',
+            password: 'password'
+        })
+
+        return request(app.getHttpServer())
+        .post('/users/signout')
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .expect(200)
+    })
+
 })
