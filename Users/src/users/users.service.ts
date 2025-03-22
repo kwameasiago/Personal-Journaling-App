@@ -227,7 +227,7 @@ export class UsersService {
     
     const [sessions, total] = await this.sessionRepository.findAndCount({
       where: { user: { id } },
-      order: { created_at: "DESC" },
+      order: { created_at: 'DESC' },
       skip: offset,
       take: limit,
     });
@@ -264,5 +264,38 @@ async signOut(req: Request) {
   };
 }
   
+/**
+ * Retrieves the current authenticated user along with their associated role details.
+ * Excludes sensitive fields by explicitly selecting only the required columns.
+ *
+ * @param req - The request object containing the authenticated user.
+ *   - req.user: The authenticated user object with at least an `id` property.
+ * @returns An object containing:
+ *   - status: A string indicating the status of the request.
+ *   - user: The current user object with selected fields and joined role details.
+ */
+async currentUser(req){
+  const { user } = req;
+  const id: number = (user as any).id;
+  const currentUser = await this.userRepository.createQueryBuilder('user')
+    .innerJoinAndSelect('user.role', 'role')
+    .select([
+      'user.id', 
+      'user.username', 
+      'user.created_at',
+      'user.updated_at',
+      'role.id', 
+      'role.name',
+      'role.created_at',
+      'role.updated_at'
+    ])
+    .where('user.id = :id', { id })
+    .getOne();
+
+  return {
+    status: 'success',
+    user: currentUser
+  }
+}
 
 }
