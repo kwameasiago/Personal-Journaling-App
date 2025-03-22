@@ -157,7 +157,7 @@ export class UsersService {
    * @returns {Promise<Object>} A promise that resolves to an object with the login status, message, and JWT token.
    * @throws {HttpException} Throws an HTTP 403 Forbidden exception if the user is not found or if the password check fails.
    */
-  async login(data: any, req: Request) {
+  async login(data: any, req: Request):Promise<any> {
     const device = this.getDevice(req);
     const ipAddress = this.getClientIp(req);
     const user = await this.userRepository.findOne({ where: { username: data.username } })
@@ -242,6 +242,27 @@ export class UsersService {
       },
     };
   }
+
+
+ /**
+ * Signs out the current user by deleting the active session.
+ *
+ * @param req - The request object containing the user and session id.
+ *   - req.user: The authenticated user object, which includes the user's sessions.
+ *   - req.sessionId: The id of the active session to be removed.
+ *
+ * @returns An object with a confirmation message and the user information.
+ */
+async signOut(req: Request) {
+  const { user } = req;
+  const sessionId: number = (user as any).session;
+  await this.sessionRepository.delete({ id: sessionId });
+
+  return {
+    status: 'success',
+    msg: 'Session signed out successfully',
+  };
+}
   
 
 }

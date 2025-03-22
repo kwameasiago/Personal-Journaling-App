@@ -17,7 +17,7 @@ export class UsersController {
         try {
             return  this.usersService.register(registerBodyDto, req)
         } catch (error) {
-            throw new HttpException('An error occurred', HttpStatus.BAD_GATEWAY);
+            throw new HttpException('An error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
@@ -28,7 +28,7 @@ export class UsersController {
         try {
             return this.usersService.login(loginBodyDto, req)
         } catch (error) {
-            throw new HttpException('An error occurred', HttpStatus.BAD_GATEWAY);
+            throw new HttpException('An error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
     }
@@ -37,5 +37,16 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     async getSessions(@Req() req: Request){
         return this.usersService.getSessions(req)
+    }
+
+    @Post('signout')
+    @HttpCode(200)
+    @UseGuards(JwtAuthGuard)
+    async signout(@Req() req: Request){
+        try {
+            return this.usersService.signOut(req)
+        } catch (error) {
+            throw new HttpException('An error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
