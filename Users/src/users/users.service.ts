@@ -1,11 +1,11 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { hashPassword } from 'src/utils';
+import { hashPassword ,comparePassword} from 'src/utils';
 import { Request } from 'express';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
 import { Role } from 'src/entities/roles.entity';
-import { Session } from 'inspector/promises';
+import { Session } from 'src/entities/session.entity';
 import { Logs } from 'src/entities/logs.entity';
 import { Repository } from 'typeorm';
 
@@ -108,10 +108,17 @@ export class UsersService {
         });
         await manager.save(logEntry);
 
+        const newSession = await manager.create(Session, {
+          device: device,
+          ip_address: ipAddress,
+          user: savedUser
+        })
+        const savedSession = await manager.save(newSession)
+
         const jwtToken = this.createJwtToken({
           id: savedUser.id,
           username: savedUser.username,
-          role: savedUser.role,
+          session: savedSession.id
         });
 
         return {
@@ -124,4 +131,55 @@ export class UsersService {
 
     return result
   }
+
+
+  async login(data: any, req: Request){
+    const device = this.getDevice(req);
+    const ipAddress = this.getClientIp(req);
+    const user = await this.userRepository.findOne({where:{username: data.username}})
+    if(user == null){
+      throw new HttpException(
+        'Username or Password incorrect',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const passowrdCheck = await comparePassword(data.password, user.password)
+
+    if(!passowrdCheck){
+      throw new HttpException(
+        'Username or Password incorrect',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+    const result = await this.sessionRepository.manager.transaction(async (manager) => {
+      const newSession = manager.create(Session, {
+        device: device,
+        ip_address: ipAddress,
+        user: user
+      })
+
+      const savedSession = await manager.save(newSession)
+
+      const newLog = manager.create(Logs, {
+        actions: 'SIGN IN',
+          device,
+          ip_address: ipAddress,
+          user: user,
+      })
+
+      const jwtToken = this.createJwtToken({
+        id: user.id,
+        username: user.username,
+        session: savedSession.id
+      })
+      return {
+        status: 'success',
+        message: 'User logged in successfully.',
+        jwtToken
+      };
+    })
+    return result
+  }
+
 }
