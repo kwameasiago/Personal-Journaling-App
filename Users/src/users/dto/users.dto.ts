@@ -1,9 +1,19 @@
 import { IsString, IsNotEmpty} from 'class-validator';
 
-export class RegisterBodyDto {
+export class AuthCredentialsDto {
+    @IsString()
     @IsNotEmpty({ message: 'Username is required' })
-    readonly username: string
-
-    @IsNotEmpty({ message: 'Username is required' })
-    readonly password: string
-}
+    username: string;
+  
+    @IsString()
+    @IsNotEmpty({ message: 'Password is required' })
+    password: string;
+  }
+  
+  export class RegisterBodyDto extends AuthCredentialsDto {
+    
+  }
+  
+  export class LoginBodyDto extends AuthCredentialsDto {
+    
+  }

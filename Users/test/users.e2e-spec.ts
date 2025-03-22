@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
@@ -22,6 +22,13 @@ describe('UsersController (2e2)', () => {
           }).compile();
       
           app = moduleFixture.createNestApplication();
+          app.useGlobalPipes(
+            new ValidationPipe({
+              whitelist: true,  
+              transform: true,  
+              forbidNonWhitelisted: true,
+            }),
+          );
           await app.init();
           
           roleRepository = moduleFixture.get(getRepositoryToken(Role))
@@ -75,15 +82,35 @@ describe('UsersController (2e2)', () => {
         .send({
             username: 'john'
         })
-        .expect(500)
+        .expect(400)
     })
 
-    it('should throw error username is not provided', () => {
+    it('should throw error passowrd is not provided', () => {
         return request(app.getHttpServer())
         .post('/users/register')
         .send({
-            username: 'alex'
+            password: 'alex'
         })
-        .expect(500)
+        .expect(400)
+    })
+
+    it('should login user successfully', () => {
+        return request(app.getHttpServer())
+        .post('/users/login')
+        .send({
+            username: 'Jane Doe',
+            password: 'password'
+        })
+        .expect(200)
+    })
+
+    it('should deny access to invalid credentials', () => {
+        return request(app.getHttpServer())
+        .post('/users/login')
+        .send({
+            username: 'Jane Doe',
+            password: 'passwords'
+        })
+        .expect(403)
     })
 })

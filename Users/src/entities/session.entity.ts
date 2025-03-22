@@ -8,9 +8,6 @@ export class Session{
     id: number;
 
     @Column()
-    token: string
-
-    @Column()
     device: string
 
     @Column()
