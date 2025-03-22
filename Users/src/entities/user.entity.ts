@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn, ManyToOne } from "typeorm";
 import { Role } from "./roles.entity";
 import { Session } from "./session.entity";
 import { Logs } from "./logs.entity";
@@ -14,16 +14,14 @@ export class User{
     @Column()
     password: string;
 
-    @Column()
-    role_id: number;
-
     @CreateDateColumn()
     created_at: Date;
 
     @UpdateDateColumn()
     updated_at: Date;
 
-    @OneToOne(() => Role, (role) => role.user, {onDelete: 'CASCADE'})
+    @ManyToOne(() => Role, (role) => role.user, {onDelete: 'CASCADE'})
+    @JoinColumn({name: 'role_id'})
     role: Role;
 
     @OneToMany(() => Session, (session) => session.user, {onDelete: 'CASCADE'})
