@@ -1,5 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { hashPassword ,comparePassword} from 'src/utils';
+import { hashPassword, comparePassword } from 'src/utils';
 import { Request } from 'express';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -54,6 +54,16 @@ export class UsersService {
       req.ip ||
       '-'
     );
+  }
+
+  /**
+  * Retrieves a session from the repository by its unique identifier.
+  *
+  * @param {number} id - The unique identifier of the session.
+  * @returns {Promise<Session | undefined>} A promise that resolves to the session object if found, or undefined if no matching session exists.
+  */
+  async getSessionById(id: number) {
+    return this.sessionRepository.findOne({ where: { id } });
   }
 
   /**
@@ -132,12 +142,26 @@ export class UsersService {
     return result
   }
 
-
-  async login(data: any, req: Request){
+  /**
+   * Handles user login by validating credentials and creating a session.
+   *
+   * This function performs the following steps:
+   * 1. Extracts device and IP address information from the incoming request.
+   * 2. Finds the user by username from the user repository.
+   * 3. Verifies the provided password against the stored hash.
+   * 4. Creates a new session and logs the sign-in action within a transaction.
+   * 5. Generates and returns a JWT token along with a success message.
+   *
+   * @param {any} data - The login data containing user credentials (username and password).
+   * @param {Request} req - The incoming HTTP request, used to extract client device and IP address.
+   * @returns {Promise<Object>} A promise that resolves to an object with the login status, message, and JWT token.
+   * @throws {HttpException} Throws an HTTP 403 Forbidden exception if the user is not found or if the password check fails.
+   */
+  async login(data: any, req: Request) {
     const device = this.getDevice(req);
     const ipAddress = this.getClientIp(req);
-    const user = await this.userRepository.findOne({where:{username: data.username}})
-    if(user == null){
+    const user = await this.userRepository.findOne({ where: { username: data.username } })
+    if (user == null) {
       throw new HttpException(
         'Username or Password incorrect',
         HttpStatus.FORBIDDEN,
@@ -146,7 +170,7 @@ export class UsersService {
 
     const passowrdCheck = await comparePassword(data.password, user.password)
 
-    if(!passowrdCheck){
+    if (!passowrdCheck) {
       throw new HttpException(
         'Username or Password incorrect',
         HttpStatus.FORBIDDEN,
@@ -163,9 +187,9 @@ export class UsersService {
 
       const newLog = manager.create(Logs, {
         actions: 'SIGN IN',
-          device,
-          ip_address: ipAddress,
-          user: user,
+        device,
+        ip_address: ipAddress,
+        user: user,
       })
 
       const jwtToken = this.createJwtToken({
@@ -181,5 +205,43 @@ export class UsersService {
     })
     return result
   }
+
+  /**
+   * Retrieves paginated sessions for the logged-in user.
+   *
+   * @param req - The request object containing the user and query parameters.
+   *   - req.user: Contains the authenticated user information.
+   *   - req.query.page: (Optional) The current page number for pagination. Defaults to 1.
+   *   - req.query.limit: (Optional) The number of sessions to display per page. Defaults to 10.
+   *
+   * @returns An object containing:
+   *   - data: An array of session entities.
+   *   - pagination: An object with pagination details such as total items, current page, limit, and total pages.
+   */
+  async getSessions(req) {
+    const { user: { id } } = req;
+    
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+    
+    const [sessions, total] = await this.sessionRepository.findAndCount({
+      where: { user: { id } },
+      order: { created_at: "DESC" },
+      skip: offset,
+      take: limit,
+    });
+    
+    return {
+      data: sessions,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+  
 
 }
