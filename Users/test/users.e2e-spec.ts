@@ -129,6 +129,23 @@ describe('UsersController (2e2)', () => {
         .expect(200)
     })
 
+  
+
+
+    it('should return current user', async () => {
+        const {body: {jwtToken}} = await request(app.getHttpServer())
+        .post('/users/login') 
+        .send({
+            username: 'Jane Doe',
+            password: 'password'
+        })
+
+        return request(app.getHttpServer())
+        .get('/users/me')
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .expect(200)
+    })
+
     it('should signout user', async () => {
         const {body: {jwtToken}} = await request(app.getHttpServer())
         .post('/users/login') 

@@ -49,4 +49,16 @@ export class UsersController {
             throw new HttpException('An error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    @Get('me')
+    @HttpCode(200)
+    @UseGuards(JwtAuthGuard)
+    async currentUser(@Req() req: Request){
+        try {
+            return this.usersService.currentUser(req)
+        } catch (error) {
+            throw new HttpException('An error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
