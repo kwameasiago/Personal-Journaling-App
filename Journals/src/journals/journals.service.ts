@@ -55,4 +55,36 @@ export class JournalsService {
         })
         return result
     }
+
+    /**
+     * Updates an existing journal entry with new data.
+     *
+     * This method first checks if the journal exists in the database. If not found, it throws an HttpException with a 404 status.
+     * Otherwise, it updates the journal's title and content using the provided body data.
+     *
+     * @param {any} body - The update payload containing the new journal title and content.
+     * @param {Request} req - The HTTP request object (currently not used in this function).
+     * @param {number} journalId - The ID of the journal to update.
+     * @returns {Promise<{status: string, message: string}>} A promise that resolves to an object with a success status and message.
+     * @throws {HttpException} If the journal with the provided ID does not exist.
+     */
+    async updateJournal(body: any, req: Request, journalId: number){
+        const journal = await this.journalsRepository.findOne({where: {id: journalId}})
+        if(journal == null){
+            throw new HttpException(
+                'Journal does not exist',
+                HttpStatus.NOT_FOUND,
+              );
+        }
+        
+        await this.journalsRepository.update(journalId, {
+            title: body.title,
+            content: body.contet
+        });
+
+        return {
+            status: 'success',
+            message: 'Journal updated',
+        }
+    }
 }

@@ -17,3 +17,7 @@ export class JournalsDto {
 export class CreateJournalsDto extends JournalsDto{
     
 }
+
+export class UpdateJournalDto extends JournalsDto{
+
+}

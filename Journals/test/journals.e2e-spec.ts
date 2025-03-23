@@ -60,4 +60,18 @@ describe('AppController (e2e)', () => {
       .expect(201)
   });
 
+  it('should create a new journal', async () => {
+    const journal = await journalsRepository.findOne({where: {title: 'my day'}})
+
+    return request(app.getHttpServer())
+      .put(`/journals/${journal.id}`)
+      .set('Authorization', `Bearer ${jwtToken}`)
+      .send({
+        title: 'my day',
+        content: 'bla bla blea',
+        tags: [{name: 'school'}]
+      })
+      .expect(200)
+  });
+
 });
