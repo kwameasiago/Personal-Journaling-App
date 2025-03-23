@@ -74,4 +74,35 @@ describe('AppController (e2e)', () => {
       .expect(200)
   });
 
+  it('should get one journal', async () => {
+    const journal = await journalsRepository.findOne({where: {title: 'my day'}})
+
+    return request(app.getHttpServer())
+      .get(`/journals/${journal.id}`)
+      .set('Authorization', `Bearer ${jwtToken}`)
+      .expect(200)
+  });
+
+  it('should get all journal', async () => {
+    const journal = await journalsRepository.findOne({where: {title: 'my day'}})
+
+    return request(app.getHttpServer())
+      .get('/journals')
+      .set('Authorization', `Bearer ${jwtToken}`)
+      .expect(200)
+  });
+
+  it('should delete a  journal', async () => {
+    const journal = await journalsRepository.findOne({where: {title: 'my day'}})
+
+    return request(app.getHttpServer())
+      .delete(`/journals/${journal.id}`)
+      .set('Authorization', `Bearer ${jwtToken}`)
+      .expect(200)
+  });
+
+
+
+
+
 });
