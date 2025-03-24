@@ -1,5 +1,5 @@
 {
-  "name": "Analysis",
+  "name": "analysis",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -17,9 +17,12 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./jest-e2e.json",
+    "typeorm": "node --loader ts-node/esm ./node_modules/typeorm/cli.js",
+    "seed": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed -c ormconfig-seed.json"
   },
   "dependencies": {
+    "@nestjs/axios": "^4.0.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.1",
     "@nestjs/core": "^11.0.1",
