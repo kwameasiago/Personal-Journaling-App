@@ -60,7 +60,7 @@ describe('AppController (e2e)', () => {
       .expect(201)
   });
 
-  it('should create a new journal', async () => {
+  it('should update a new journal', async () => {
     const journal = await journalsRepository.findOne({where: {title: 'my day'}})
 
     return request(app.getHttpServer())
@@ -84,8 +84,6 @@ describe('AppController (e2e)', () => {
   });
 
   it('should get all journal', async () => {
-    const journal = await journalsRepository.findOne({where: {title: 'my day'}})
-
     return request(app.getHttpServer())
       .get('/journals')
       .set('Authorization', `Bearer ${jwtToken}`)
