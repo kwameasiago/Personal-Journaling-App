@@ -2,12 +2,15 @@ import { Seeder, Factory } from 'typeorm-seeding';
 import { Connection } from 'typeorm';
 import { Role } from 'src/entities/roles.entity';
 import { User } from 'src/entities/user.entity';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export default class CreateUsers implements Seeder {
     public async run(factory: Factory, connection: Connection): Promise<any> {
-        const roleRepository = connection.getRepository(Role)
-        const adminRole = await roleRepository.findOne({ where: { name: 'Admin' } })
-        const userRole = await roleRepository.findOne({ where: { name: 'User' } })
+        const roleRepository = connection.getRepository(Role);
+        const adminRole = await roleRepository.findOne({ where: { name: 'Admin' } });
+        const userRole = await roleRepository.findOne({ where: { name: 'User' } });
+        
         if (!adminRole || !userRole) {
             throw new Error('Admin or User role not found');
         }
@@ -24,7 +27,14 @@ export default class CreateUsers implements Seeder {
                 role: userRole,
             },
         ];
-        await connection.getRepository(User).save(users)
+        const savedUsers = await connection.getRepository(User).save(users);
+        
+        const userIds = savedUsers.map(user => user.id).join(',');
+        
+        const filePath = path.resolve(__dirname, '../../../seed_user.txt');
+        
+        fs.writeFileSync(filePath, userIds, 'utf8');
 
+        console.log(`User IDs saved to ${filePath}`);
     }
 }

@@ -136,3 +136,4 @@ dist
 .pnp.*
 .env.test
 .env.database
+seed_*
