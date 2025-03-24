@@ -19,7 +19,7 @@ export class Journal{
     created_at: Timestamp
 
     @UpdateDateColumn()
-    updated_ad: Timestamp
+    updated_at: Timestamp
 
     @OneToMany(() => Tags, (tags) => tags.journal, {onDelete: 'CASCADE'})
     tags: Tags

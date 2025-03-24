@@ -80,9 +80,11 @@ export class JournalsService {
 
         await this.journalsRepository.update(journalId, {
             title: body.title,
-            content: body.contet
+            content: body.content
         });
 
+        const updatedJournal = await this.journalsRepository.findOne({ where: { id: journalId } });
+        await this.rabbitmqService.publish('update_journal', updatedJournal)
         return {
             status: 'success',
             message: 'Journal updated',
@@ -110,7 +112,7 @@ export class JournalsService {
         }
 
         await this.journalsRepository.remove(journal)
-
+        await this.rabbitmqService.publish('delete_journal', journalId)
         return {
             status: 'success',
             message: 'Journal deleted'
