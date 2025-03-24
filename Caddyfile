@@ -1,0 +1,19 @@
+:80
+
+# Route requests for users
+route /users-service* {
+    uri strip_prefix /users-service
+    reverse_proxy users-api:3000
+}
+
+# Route requests for journals
+route /journals/service* {
+    uri strip_prefix /journals/service
+    reverse_proxy journals-api:3001
+}
+
+# Route requests for analysis (if needed)
+route /analysis-service* {
+    uri strip_prefix /analysis-service
+    reverse_proxy analysis-api:3002
+}

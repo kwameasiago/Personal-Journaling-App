@@ -28,6 +28,20 @@ services:
       - .env.database
     networks:
       - journal-app
+
+  caddy:
+    image: caddy:2
+    container_name: caddy-gateway
+    ports:
+      - "80:80" # change to port 80 
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    depends_on:
+      - users-api
+      - journals-api
+      - analysis-api
+    networks:
+      - journal-app
     
   
   users-api:
