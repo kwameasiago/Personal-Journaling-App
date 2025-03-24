@@ -218,7 +218,6 @@ export class AnalysisService implements OnModuleInit {
                 where: { journal_id: id },
                 relations: ['wordCount']
             });
-            console.log(message);
 
             if (journal) {
                 await this.journalsRepository.update({ id: journal.id }, {
