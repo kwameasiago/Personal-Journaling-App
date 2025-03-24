@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn, Timestamp } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn, Timestamp, OneToOne } from "typeorm";
 import { Tags } from "./tags.entity";
 import { WordCount } from "./wordCount.entity";
+import { serviceEvent } from "./serviceEvent.entity";
 
 
 @Entity('journals')
@@ -18,7 +19,16 @@ export class Journals{
     user_id: number
 
     @Column()
-    journal_data: Date
+    journal_id: number
+    
+    @Column()
+    journal_length: number
+
+    @Column()
+    journal_created_at_date: Date
+
+    @Column()
+    journal_updated_at_date: Date
 
     @Column()
     time_of_day: string
@@ -27,11 +37,15 @@ export class Journals{
     created_at: Timestamp
 
     @UpdateDateColumn()
-    updated_ad: Timestamp
+    updated_at: Timestamp
+
+    @OneToOne(() => serviceEvent, event => event.journal, {onDelete: 'CASCADE'})
+    @JoinColumn({name: 'event_id'})
+    event: serviceEvent
 
     @OneToMany(() => Tags, (tags) => tags.journals, {onDelete: 'CASCADE'})
     tags: Tags
 
-    @OneToMany(() => WordCount, (wordCount) => wordCount.journals, {onDelete:'CASCADE'})
+    @OneToOne(() => WordCount, (wordCount) => wordCount.journals, {onDelete:'CASCADE'})
     wordCount: WordCount
 }
