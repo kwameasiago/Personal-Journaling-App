@@ -4,6 +4,7 @@ import { Role } from 'src/entities/roles.entity';
 import { User } from 'src/entities/user.entity';
 import * as fs from 'fs';
 import * as path from 'path';
+import { hashPassword } from 'src/utils';
 
 export default class CreateUsers implements Seeder {
     public async run(factory: Factory, connection: Connection): Promise<any> {
@@ -18,12 +19,12 @@ export default class CreateUsers implements Seeder {
         const users: Partial<User>[] = [
             {
                 username: 'John Doe',
-                password: 'john@john.com',
+                password: await hashPassword('password'),
                 role: adminRole,
             },
             {
                 username: 'Jane Doe',
-                password: 'jane@jane.com',
+                password: await hashPassword('password'),
                 role: userRole,
             },
         ];
