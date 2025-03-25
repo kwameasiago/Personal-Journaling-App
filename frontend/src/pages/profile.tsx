@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReusableForm from '../components/form';
+import AuthWrapper from '../components/authWrapper';
 
 const Profile: React.FC = () => {
   const [formValue, setFormValue] = useState({
@@ -24,6 +25,7 @@ const Profile: React.FC = () => {
     },
   ]
   return (
+    <AuthWrapper>
     <div className='flex flex-row'>
       
       <div className='basis-2/6 flex items-center justify-center'>
@@ -41,6 +43,7 @@ const Profile: React.FC = () => {
       </div>
 
     </div>
+    </AuthWrapper>
   );
 };
 
