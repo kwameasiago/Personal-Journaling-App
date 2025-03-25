@@ -14,16 +14,5 @@ export default class CreateJournals implements Seeder {
                 user_id: 1
             }
         ]);
-
-        // Extract journal IDs (assuming there is only one journal in this case)
-        const journalIds = savedJournals.map(journal => journal.id).join(',');
-
-        // Resolve the file path relative to the current file's directory
-        const filePath = path.resolve(__dirname, '../../../seed_journals.txt');
-
-        // Write the journal IDs to the file
-        fs.writeFileSync(filePath, journalIds, 'utf8');
-
-        console.log(`Journal IDs saved to ${filePath}`);
     }
 }
