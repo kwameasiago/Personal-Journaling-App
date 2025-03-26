@@ -1,8 +1,8 @@
 // InfiniteScrollList.tsx
 import React, { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-// import { fetchItems } from './dataFetcher';
-const fetchItems =  async (fetch: any, page: number, pageSize: number)=> {return []}
+import axiosInstance from '../config/api';
+
 
 interface InfiniteScrollListProps<T> {
   fetchUrl: string;
@@ -21,8 +21,10 @@ function InfiniteScrollList<T>({
 
   const fetchData = async () => {
     try {
-      const data: T[] = await fetchItems(fetchUrl, page, pageSize);
+      const res: T[] = await axiosInstance.get(fetchUrl, {params:{limit: pageSize, page}});
+      let data = res.data.journals
       if (data && data.length > 0) {
+        console.log(data)
         setItems((prev) => [...prev, ...data]);
         setPage((prev) => prev + 1);
       } else {
