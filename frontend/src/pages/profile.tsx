@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReusableForm from '../components/form';
 import AuthWrapper from '../components/authWrapper';
+import Nav from '../components/Nav';
 
 const Profile: React.FC = () => {
   const [formValue, setFormValue] = useState({
@@ -26,23 +27,21 @@ const Profile: React.FC = () => {
   ]
   return (
     <AuthWrapper>
-    <div className='flex flex-row'>
-      
-      <div className='basis-2/6 flex items-center justify-center'>
-      <div>
-      <h1 className='text-4xl font-bold text-center'>Update profile</h1>
-        <ReusableForm
-          inputs={formData}
-          onSubmit={() => { }}
-          width={546}
-        />
-        </div>
-      </div>
-      <div className='basis-4/6 flex items-center justify-center h-screen bg-slate-100'>
-        <h1 className='text-blue-100 text-6xl'>Personal Journal App</h1>
-      </div>
+      <Nav />
+      <div className='flex flex-row'>
 
-    </div>
+        <div className='basis-6/6 flex items-center justify-center'>
+          <div>
+            <h1 className='text-4xl font-bold text-center'>Update profile</h1>
+            <ReusableForm
+              inputs={formData}
+              onSubmit={() => { }}
+              width={546}
+            />
+          </div>
+        </div>
+
+      </div>
     </AuthWrapper>
   );
 };

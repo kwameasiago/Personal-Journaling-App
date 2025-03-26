@@ -7,8 +7,8 @@ route /users-service* {
 }
 
 # Route requests for journals
-route /journals/service* {
-    uri strip_prefix /journals/service
+route /journals-service* {
+    uri strip_prefix /journals-service
     reverse_proxy journals-api:3001
 }
 
