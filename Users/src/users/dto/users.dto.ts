@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty} from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional} from 'class-validator';
 
 export class AuthCredentialsDto {
     @IsString()
@@ -18,6 +18,12 @@ export class AuthCredentialsDto {
     
   }
 
-  export class updateBodyDto extends AuthCredentialsDto {
+  export class updateBodyDto {
+    @IsString()
+    @IsNotEmpty({ message: 'Username is required' })
+    username: string;
     
+    @IsOptional()
+    @IsString()
+    password?: string;
   }

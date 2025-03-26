@@ -233,7 +233,7 @@ export class UsersService {
     });
     
     return {
-      data: sessions,
+      sessions,
       pagination: {
         total,
         page,
@@ -325,7 +325,13 @@ async updateCurrentUser(body: any, req: Request) {
 
   // Update the current user's record with the new username and password.
   // (Ensure that the password is hashed if needed before saving)
-  await this.userRepository.update(id, { username, password: await hashPassword(password) });
+  if(password && username){
+    await this.userRepository.update(id, { username, password: await hashPassword(password) });
+  }
+  else{
+    await this.userRepository.update(id, { username});
+  }
+  
 
   // Retrieve the updated user record
   const updatedUser = await this.userRepository.findOne({ where: { id }, select: ['id', 'username'] });

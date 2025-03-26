@@ -2,7 +2,7 @@ import React  from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Login from './pages/login'
 import Register from './pages/register'
-import Profile from './pages/profile'
+import Profile from './pages/Profile/profile'
 import Journal from './pages/journals/journal'
 import Dashboard from './pages/dashboard'
 

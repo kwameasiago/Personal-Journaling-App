@@ -43,8 +43,12 @@ const CreateJournal: React.FC = () => {
       const formData = new FormData(e.target);
       const title = formData.get('title');
       const content = formData.get('content');
-      const tags = formData.get('tags');
-      const data: any = await axiosInstance.post('/journals-service/journals', { title, content, tags: formatTags(tags)})
+      const tags = formatTags(formData.get('tags'));
+      if(tags.length == 0){
+        toast.error('Please add a tag')
+        return 
+      }
+      const data: any = await axiosInstance.post('/journals-service/journals', { title, content, tags: tags})
       toast.success('Journal created')
       setTimeout(
         () => {

@@ -57,7 +57,8 @@ const JournalListItem: React.FC<JournalItemProps> = ({ item, setCurrentItem }) =
         <div className='flex justify-between'>
           <div className='flex flex-start'>
             <h3 className="font-semibold mb-2">Tags:</h3>
-            <div className="flex flex-start gap-2">
+           <div className="flex flex-start gap-2">
+            {item.tags.length == 0&& <span  className=" items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">No tags</span>}
               {item.tags.map(tag => (
                 <span
                   key={tag.id}
