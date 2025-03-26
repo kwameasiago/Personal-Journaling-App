@@ -70,6 +70,7 @@ export class JournalsService {
      * @throws {HttpException} If the journal with the provided ID does not exist.
      */
     async updateJournal(body: any, req: Request, journalId: number) {
+        const user_id = (req as any).user.id;
         const journal = await this.journalsRepository.findOne({ where: { id: journalId } })
         if (journal == null) {
             throw new HttpException(
@@ -83,7 +84,7 @@ export class JournalsService {
             content: body.content
         });
 
-        const updatedJournal = await this.journalsRepository.findOne({ where: { id: journalId } });
+        const updatedJournal = await this.journalsRepository.findOne({ where: { id: journalId, user_id } });
         await this.rabbitmqService.publish('update_journal', updatedJournal)
         return {
             status: 'success',
@@ -103,7 +104,8 @@ export class JournalsService {
      * @throws HttpException if the journal does not exist.
      */
     async deleteJournal(req: Request, journalId: number) {
-        const journal = await this.journalsRepository.findOne({ where: { id: journalId } })
+        const user_id = (req as any).user.id;
+        const journal = await this.journalsRepository.findOne({ where: { id: journalId, user_id } })
         if (journal == null) {
             throw new HttpException(
                 'Journal does not exist',
@@ -130,7 +132,8 @@ export class JournalsService {
      * @throws HttpException if the journal does not exist.
      */
     async getOneJournal(req: Request, journalId: number) {
-        const journal = await this.journalsRepository.findOne({ where: { id: journalId }, relations: ['tags'], })
+        const user_id = (req as any).user.id;
+        const journal = await this.journalsRepository.findOne({ where: { id: journalId, user_id  }, relations: ['tags'], })
         if (journal == null) {
             throw new HttpException(
                 'Journal does not exist',
@@ -157,11 +160,13 @@ export class JournalsService {
      * @returns An object with the list of journals and pagination details.
      */
     async getJournals(req: Request, journalId: number) {
+        const user_id = (req as any).user.id;
         const page = parseInt(req.query.page as string, 10) || 1;
         const limit = parseInt(req.query.limit as string, 10) || 10;
         const skip = (page - 1) * limit;
 
         const [journals, total] = await this.journalsRepository.findAndCount({
+            where:{user_id},
             relations: ['tags'],
             skip,
             take: limit,

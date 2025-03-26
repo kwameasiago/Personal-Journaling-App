@@ -13,7 +13,7 @@ const Register: React.FC = () => {
   })
   const formData = [
     {
-      placeholder: 'usernmae',
+      placeholder: 'username',
       type: 'text',
       name: 'username',
       value: formValue.username || '',
@@ -39,7 +39,7 @@ const Register: React.FC = () => {
         setLoader(false)
         return 
       }
-      const data: any = await axiosInstance.post('/users-service/users/register', { username, password })
+      const {data}: any = await axiosInstance.post('/users-service/users/register', { username, password })
       localStorage.setItem('token', data.jwtToken)
       navigate('/');
     } catch (error) {
