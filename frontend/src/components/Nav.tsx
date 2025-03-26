@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom'
 
 const Nav = () => {
   const navigate = useNavigate();
@@ -12,7 +11,6 @@ const Nav = () => {
 
   return (
     <nav className="flex items-center justify-between p-4 bg-gray-800 text-white">
-      <ToastContainer/>
       <div className="flex space-x-4">
       <Link to="/" className="hover:text-gray-300">
           Journal

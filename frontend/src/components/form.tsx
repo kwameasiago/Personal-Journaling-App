@@ -21,7 +21,7 @@ interface ReusableFormProps {
 
 const ReusableForm: React.FC<ReusableFormProps> = ({ inputs, onSubmit, width, loader, submitText }) => {
   return (
-    <form onSubmit={onSubmit} action="" className={`flex flex-col  ${width ? `w-[${width}px]` : 'w-[546px]'}`}>
+    <form onSubmit={onSubmit} action="" className={`flex flex-col  ${width ? `w-[${width}px]` : 'w-[546px]'} p-5`}>
       {inputs.map((inputProps, index) => (
         <Input
           key={index}

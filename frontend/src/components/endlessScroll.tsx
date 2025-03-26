@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import axiosInstance from '../config/api';
+import Loader from './loading';
 
 
 interface InfiniteScrollListProps<T> {
@@ -24,14 +25,12 @@ function InfiniteScrollList<T>({
       const res: T[] = await axiosInstance.get(fetchUrl, {params:{limit: pageSize, page}});
       let data = res.data.journals
       if (data && data.length > 0) {
-        console.log(data)
         setItems((prev) => [...prev, ...data]);
         setPage((prev) => prev + 1);
       } else {
         setHasMore(false);
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
       setHasMore(false);
     }
   };
@@ -46,7 +45,7 @@ function InfiniteScrollList<T>({
       dataLength={items.length}
       next={fetchData}
       hasMore={hasMore}
-      loader={<h4>Loading...</h4>}
+      loader={<Loader />}
       endMessage={
         <p style={{ textAlign: 'center' }}>
           <b>No more items to show.</b>
