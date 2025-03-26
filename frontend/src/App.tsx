@@ -4,7 +4,7 @@ import Login from './pages/login'
 import Register from './pages/register'
 import Profile from './pages/Profile/profile'
 import Journal from './pages/journals/journal'
-import Dashboard from './pages/dashboard'
+import Dashboard from './pages/dashboard/dashboard'
 
 import './App.css'
 

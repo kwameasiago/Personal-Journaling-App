@@ -20,7 +20,7 @@ RUN npm run build
 ENV HOST=0.0.0.0
 
 # Expose the port the app runs on
-EXPOSE 3001
+EXPOSE 3002
 
 # Define the command to run your app
 CMD ["node", "dist/main"]
