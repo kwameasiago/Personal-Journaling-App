@@ -395,6 +395,7 @@ export class AnalysisService implements OnModuleInit {
             combinedWord = combinedWord.concat(arr.wordCount_word_cloud);
         });
         let result = this.combineAndSum(combinedWord);
+        console.log({result})
         return {
             status: 'success',
             result,
