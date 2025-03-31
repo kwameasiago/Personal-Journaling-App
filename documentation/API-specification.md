@@ -685,16 +685,16 @@ This microservice aggregates journal data and computes analytical insights for v
 
 #### 1. Calendar Heatmap Data Endpoint
 
-- **Endpoint:** `GET /api/analysis/calendar-heatmap`
+- **Endpoint:** `GET /api/analysis/journal-frequency?start_date=2025-01-20&end_date=2025-08-30`
 - **Purpose:**  
     Returns data for a calendar heatmap chart that displays journal entry frequency over time.
 - **Response Format:**
     
     ```json
     [
-      { "date": "2016-01-01", "count": 12 },
-      { "date": "2016-01-22", "count": 122 },
-      { "date": "2016-01-30", "count": 38 }
+      { "day": "2016-01-01", "count": 12 },
+      { "day": "2016-01-22", "count": 122 },
+      { "day": "2016-01-30", "count": 38 }
       // ... additional entries
     ]
     ```
@@ -706,17 +706,17 @@ This microservice aggregates journal data and computes analytical insights for v
 
 #### 2. Category Distribution Chart Endpoint
 
-- **Endpoint:** `GET /api/analysis/category-distribution`
+- **Endpoint:** `GET /api/analysis/category-distribution?start_date=2025-01-20&end_date=2025-08-30`
 - **Purpose:**  
     Provides data for visualizing the distribution of journal entries across categories, either as a pie chart or a bar graph.
 - **Response Format:**
     
     ```json
     [
-  { "category": "Personal", "count": 15 },
-  { "category": "Work", "count": 8 },
-  { "category": "Travel", "count": 4 },
-  { "category": "Health", "count": 3 }
+  { "tags.id": "Personal", "count": 15 },
+  { "tags.id": "Work", "count": 8 },
+  { "tags.id": "Travel", "count": 4 },
+  { "tags.id": "Health", "count": 3 }
 ]
     ```
     
@@ -727,16 +727,16 @@ This microservice aggregates journal data and computes analytical insights for v
 
 #### 3. Word Count Trends Line Chart Endpoint
 
-- **Endpoint:** `GET /api/analysis/word-count-trends`
+- **Endpoint:** `GET /api/analysis/word-length?start_date=2025-01-20&end_date=2025-08-30`
 - **Purpose:**  
     Returns data for a line chart that tracks word count trends over time.
 - **Response Format:**
     
     ```json
     [
-      { "date": "2025-01-01", "value": 250 },
-      { "date": "2025-01-02", "value": 300 },
-      { "date": "2025-01-03", "value": 280 }
+      { "day": "2025-01-01", "totalLength": 250 },
+      { "day": "2025-01-02", "totalLength": 300 },
+      { "day": "2025-01-03", "totalLength": 280 }
       // ... additional entries
     ]
     ```
@@ -748,7 +748,7 @@ This microservice aggregates journal data and computes analytical insights for v
 
 #### 4. Entry Length Averages by Category Endpoint
 
-- **Endpoint:** `GET /api/analysis/entry-length-averages`
+- **Endpoint:** `GET /api/analysis/word-length-by-category?start_date=2025-01-20&end_date=2025-08-30`
 - **Purpose:**  
     Provides data for a bar chart that shows the average length (word count or character count) of journal entries grouped by category.
 - **Response Format:**
@@ -768,7 +768,7 @@ This microservice aggregates journal data and computes analytical insights for v
 
 #### 5. Time-of-Day Writing Pattern Analysis Endpoint
 
-- **Endpoint:** `GET /api/analysis/time-of-day`
+- **Endpoint:** `GET /api/analysis/time-of-day-distribution?start_date=2025-01-20&end_date=2025-08-30`
 - **Purpose:**  
     Provides data for a bar chart analyzing writing patterns during different times of the day over a specified month.
 - **Query Parameter:**
@@ -791,16 +791,16 @@ This microservice aggregates journal data and computes analytical insights for v
 
 #### 6. Word/Phrase Frequency Analysis for Word Clouds Endpoint
 
-- **Endpoint:** `GET /api/analysis/word-frequency`
+- **Endpoint:** `GET /api/analysis/word-cloud?start_date=2025-01-20&end_date=2025-08-30`
 - **Purpose:**  
     Returns data for generating a word cloud that visualizes the frequency of words or phrases found in journal entries.
 - **Response Format:**
     
     ```json
     [
-      { "word": "life", "frequency": 50 },
-      { "word": "work", "frequency": 30 },
-      { "word": "travel", "frequency": 20 }
+      { "text": "life", "value": 50 },
+      { "text": "work", "value": 30 },
+      { "text": "travel", "value": 20 }
       // ... additional entries
     ]
     ```
